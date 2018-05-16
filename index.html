@@ -6,14 +6,14 @@
     <style>
       .node {
         cursor: pointer;
-        fill: #fff;
-        stroke: red;
-        stroke-width: 3px;
+        fill: black;
+        stroke: gray;
+        stroke-width: 2px;
       }
 
       .link {
         fill: rgba(0,0,0,0);
-        stroke: blue;
+        stroke: red;
         stroke-width: 2px;
       }
 
@@ -127,7 +127,7 @@
       .attr("id",function(d){return "node-"+d.id})
       .attr("cx",function(d){return d.x;})
       .attr("cy",H/2)
-      .attr("r", 30);
+      .attr("r", 15);
 
   var linkWrapper = svg.append("g").attr("id","links").selectAll("path.link")
       .data(links, function(d) { return d.target.id; })
