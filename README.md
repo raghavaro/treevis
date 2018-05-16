@@ -32,3 +32,7 @@ Tree Json format:
     ]
 }
 ```
+
+## Progress Screenshot
+
+![Progress](https://github.com/raghavaro/treevis/blob/master/screenshot.png?raw=true) 
