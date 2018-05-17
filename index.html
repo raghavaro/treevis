@@ -1,160 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Tree Example</title>
-    <style>
-      .node {
-        cursor: pointer;
-        fill: black;
-        stroke: gray;
-        stroke-width: 2px;
-      }
+    <head>
+        <meta charset="utf-8">
+        <title>Tree Example</title>
+        <style>
+            .node {
+                cursor: pointer;
+                fill: black;
+                stroke: gray;
+                stroke-width: 2px;
+            }
 
-      .link {
-        fill: rgba(0,0,0,0);
-        stroke: red;
-        stroke-width: 2px;
-      }
-    </style>
-  </head>
-  <body>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="https://d3js.org/d3-path.v1.min.js"></script>
-  <script>
+            .link {
+                fill: rgba(0,0,0,0);
+                stroke: red;
+                stroke-width: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="https://d3js.org/d3-path.v1.min.js"></script>
+        <script>
 
-  // Initate config and data
+            // Initate config and data
 
-  var config = {
-      "background-color": "black",
-      "spine-color": "white",
-  }
+            var config = {
+                "background-color": "black",
+                "spine-color": "white",
+            }
 
-  var treeData = {
-      "name": "Asta",
-      "date": 20,
-      "image": "",
-      "url": "",
-      "owner": "raghav",
-      "children": [
-          {
-              "name": "Asti",
-              "date": 400,
-              "image": "",
-              "url": "",
-              "owner": "raghav",
-              "children": [
-                  {
-                      "name": "Astio",
-                      "date": 700,
-                      "image": "",
-                      "url": "",
-                      "owner": "raghav",
-                      "children": []
-                  },{
-                      "name": "Astu",
-                      "date": 800,
-                      "image": "",
-                      "url": "",
-                      "owner": "raghav",
-                      "children": []
-                  }
-              ]
-          },
-          {
-              "name": "Asto",
-              "date": 600,
-              "image": "",
-              "url": "",
-              "owner": "raghav",
-              "children": []
-          }
-      ]
-  }
+            var treeData = {
+                "name": "Asta",
+                "date": 20,
+                "image": "",
+                "url": "",
+                "owner": "raghav",
+                "children": [
+                    {
+                        "name": "Asti",
+                        "date": 400,
+                        "image": "",
+                        "url": "",
+                        "owner": "raghav",
+                        "children": [
+                            {
+                                "name": "Astio",
+                                "date": 700,
+                                "image": "",
+                                "url": "",
+                                "owner": "raghav",
+                                "children": []
+                            },{
+                                "name": "Astu",
+                                "date": 800,
+                                "image": "",
+                                "url": "",
+                                "owner": "raghav",
+                                "children": []
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Asto",
+                        "date": 600,
+                        "image": "",
+                        "url": "",
+                        "owner": "raghav",
+                        "children": []
+                    }
+                ]
+            }
 
-  var H = 300,
-      W = window.innerWidth
-          || document.documentElement.clientWidth
-          || document.body.clientWidth;
+            var H = 300,
+                W = window.innerWidth
+            || document.documentElement.clientWidth
+            || document.body.clientWidth;
 
-  var spineHeight = 6,
-      spineY = (H - spineHeight)/2;
-
-
-  // Search for minimum and maximum nodes
-
-  var minDate = new Date().getTime(),
-      maxDate = 0;
-
-  function minMaxDateSearch(node) {
-      thisDate = node.date;
-      if (thisDate < minDate)
-          minDate = thisDate;
-      if (thisDate > maxDate)
-          maxDate = thisDate;
-      for (i in node.children)
-          minMaxDateSearch(node.children[i]);
-  }
-
-  minMaxDateSearch(treeData);
+            var spineHeight = 6,
+                spineY = (H - spineHeight)/2;
 
 
-  // Build tree diagram
+            // Search for minimum and maximum nodes
 
-  d3.selection.prototype.moveToFront = function() {  
-      return this.each(function(){
-          this.parentNode.appendChild(this);
-      });
-  };
+            var minDate = new Date().getTime(),
+                maxDate = 0;
 
-  var margin = {top: 20, right: 120, bottom: 20, left: 120},
-      width = W - margin.right - margin.left,
-      height = H - margin.top - margin.bottom;
+            function minMaxDateSearch(node) {
+                thisDate = node.date;
+                if (thisDate < minDate)
+                    minDate = thisDate;
+                if (thisDate > maxDate)
+                    maxDate = thisDate;
+                for (i in node.children)
+                    minMaxDateSearch(node.children[i]);
+            }
 
-  var svg = d3.select("body").append("svg")
-      .attr("width", width + margin.right + margin.left)
-      .attr("height", height + margin.top + margin.bottom);
+            minMaxDateSearch(treeData);
 
-  svg.append("rect").attr("width", "100%").attr("height", "100%")
-      .attr("fill", config["background-color"]);
-  svg.append("rect").attr("y", spineY).attr("width", "100%").attr("height", spineHeight)
-      .attr("fill", config["spine-color"]);
 
-  var tree = d3.layout.tree(),
-      nodes = tree.nodes(treeData),
-      links = tree.links(nodes);
+            // Build tree diagram
 
-  var nodeWrapper = svg.append("g").attr("id","nodes").selectAll("g.node")
-      .data(nodes, function(d) {d.x = d.date; return d.id || (d.id = ++i); })
-      .enter().append("circle")
-      .attr("class", "node")
-      .attr("id",function(d){return "node-"+d.id})
-      .attr("cx",function(d){return d.x;})
-      .attr("cy",H/2)
-      .attr("r", 15);
+            d3.selection.prototype.moveToFront = function() {  
+                return this.each(function(){
+                    this.parentNode.appendChild(this);
+                });
+            };
 
-  var linkWrapper = svg.append("g").attr("id","links").selectAll("path.link")
-      .data(links, function(d) { return d.target.id; })
-      .enter()
-      .append("path", "g")
-      .attr("d", function(d){
-          var path = d3.path();
-          path.moveTo(d.source.x, H/2);
-          var yDirection = (d.source.depth % 2 == 1) ? 1 : -1,
-              yAnchor = H/2 + yDirection * (d.target.x-d.source.x) / 3,
-              xAnchor = d.source.x+(d.target.x-d.source.x)/2;
-          path.quadraticCurveTo(xAnchor, yAnchor, d.target.x, H/2, 0);
-          return path.toString();
-      })
-      .attr("class", "link")
-      .attr("id",function(d){
-          return "link-" + d.source.id + "->" + d.target.id;
-      });
-      
-  d3.select("#nodes").moveToFront();
-      
-  </script>
+            var margin = {top: 20, right: 120, bottom: 20, left: 120},
+                width = W - margin.right - margin.left,
+                height = H - margin.top - margin.bottom;
 
-  </body>
+            var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.right + margin.left)
+            .attr("height", height + margin.top + margin.bottom);
+
+            svg.append("rect").attr("width", "100%").attr("height", "100%")
+                .attr("fill", config["background-color"]);
+            svg.append("rect").attr("y", spineY).attr("width", "100%").attr("height", spineHeight)
+                .attr("fill", config["spine-color"]);
+
+            var tree = d3.layout.tree(),
+                nodes = tree.nodes(treeData),
+                links = tree.links(nodes);
+
+            var nodeWrapper = svg.append("g").attr("id","nodes").selectAll("g.node")
+            .data(nodes, function(d) {d.x = d.date; return d.id || (d.id = ++i); })
+            .enter().append("circle")
+            .attr("class", "node")
+            .attr("id",function(d){return "node-"+d.id})
+            .attr("cx",function(d){return d.x;})
+            .attr("cy",H/2)
+            .attr("r", 15);
+
+            var linkWrapper = svg.append("g").attr("id","links").selectAll("path.link")
+            .data(links, function(d) { return d.target.id; })
+            .enter()
+            .append("path", "g")
+            .attr("d", function(d){
+                var path = d3.path();
+                path.moveTo(d.source.x, H/2);
+                var yDirection = (d.source.depth % 2 == 1) ? 1 : -1,
+                    yAnchor = H/2 + yDirection * (d.target.x-d.source.x) / 3,
+                    xAnchor = d.source.x+(d.target.x-d.source.x)/2;
+                path.quadraticCurveTo(xAnchor, yAnchor, d.target.x, H/2, 0);
+                return path.toString();
+            })
+            .attr("class", "link")
+            .attr("id",function(d){
+                return "link-" + d.source.id + "->" + d.target.id;
+            });
+
+            d3.select("#nodes").moveToFront();
+
+        </script>
+
+    </body>
 </html>
 
