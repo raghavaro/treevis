@@ -16,7 +16,6 @@
         stroke: red;
         stroke-width: 2px;
       }
-
     </style>
   </head>
   <body>
@@ -102,6 +101,12 @@
 
   // Build tree diagram
 
+  d3.selection.prototype.moveToFront = function() {  
+      return this.each(function(){
+          this.parentNode.appendChild(this);
+      });
+  };
+
   var margin = {top: 20, right: 120, bottom: 20, left: 120},
       width = W - margin.right - margin.left,
       height = H - margin.top - margin.bottom;
@@ -112,7 +117,6 @@
 
   svg.append("rect").attr("width", "100%").attr("height", "100%")
       .attr("fill", config["background-color"]);
-  svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   svg.append("rect").attr("y", spineY).attr("width", "100%").attr("height", spineHeight)
       .attr("fill", config["spine-color"]);
 
@@ -146,9 +150,10 @@
       .attr("id",function(d){
           return "link-" + d.source.id + "->" + d.target.id;
       });
-
-
-</script>
+      
+  d3.select("#nodes").moveToFront();
+      
+  </script>
 
   </body>
 </html>
