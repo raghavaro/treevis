@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Tree Example</title>
         <style>
-            .node {
+            .node circle{
                 cursor: pointer;
                 fill: black;
                 stroke: gray;
@@ -33,28 +33,28 @@
             var treeData = {
                 "name": "Asta",
                 "date": 20,
-                "image": "",
+                "image": "https://github.com/raghavaro/cct/raw/master/examples/example5.png?raw=true",
                 "url": "",
                 "owner": "raghav",
                 "children": [
                     {
                         "name": "Asti",
                         "date": 400,
-                        "image": "",
+                        "image": "https://github.com/raghavaro/cct/raw/master/examples/example5.png?raw=true",
                         "url": "",
                         "owner": "raghav",
                         "children": [
                             {
                                 "name": "Astio",
                                 "date": 700,
-                                "image": "",
+                                "image": "https://github.com/raghavaro/cct/raw/master/examples/example5.png?raw=true",
                                 "url": "",
                                 "owner": "raghav",
                                 "children": []
                             },{
                                 "name": "Astu",
                                 "date": 800,
-                                "image": "",
+                                "image": "https://github.com/raghavaro/cct/raw/master/examples/example5.png?raw=true",
                                 "url": "",
                                 "owner": "raghav",
                                 "children": []
@@ -64,7 +64,7 @@
                     {
                         "name": "Asto",
                         "date": 600,
-                        "image": "",
+                        "image": "https://github.com/raghavaro/cct/raw/master/examples/example5.png?raw=true",
                         "url": "",
                         "owner": "raghav",
                         "children": []
@@ -106,6 +106,35 @@
                     this.parentNode.appendChild(this);
                 });
             };
+            
+            function mouseOverNode(d, i) {  // Add interactivity
+                d3.select(this.firstChild).transition()
+                .duration(2000)
+                .ease("elastic")
+                .attr({
+                    r: 50
+                });
+                d3.select(this.lastChild).transition()
+                .duration(2000)
+                .ease("elastic")
+                .attr({
+                    opacity: 1
+                });
+            }
+            function mouseOutNode(d, i) {
+                d3.select(this.firstChild).transition()
+                .duration(1500)
+                .ease("elastic")
+                .attr({
+                    r: 15
+                });
+                d3.select(this.lastChild).transition()
+                .duration(1500)
+                .ease("elastic")
+                .attr({
+                    opacity: 0
+                });
+            }
 
             var margin = {top: 20, right: 120, bottom: 20, left: 120},
                 width = W - margin.right - margin.left,
@@ -125,13 +154,26 @@
                 links = tree.links(nodes);
 
             var nodeWrapper = svg.append("g").attr("id","nodes").selectAll("g.node")
-            .data(nodes, function(d) {d.x = d.date; return d.id || (d.id = ++i); })
-            .enter().append("circle")
-            .attr("class", "node")
+            .data(nodes, function(d) {
+                d.x = d.date; 
+                return d.id || (d.id = ++i); 
+            }).enter()
+            .append("g").attr("class", "node")
+            .on("mouseover", mouseOverNode)
+            .on("mouseout", mouseOutNode);
+            
+            nodeWrapper.append("circle")
             .attr("id",function(d){return "node-"+d.id})
             .attr("cx",function(d){return d.x;})
             .attr("cy",H/2)
             .attr("r", 15);
+            nodeWrapper.append("svg:image")
+            .attr('x', function(d){return d.x-35})
+            .attr('y', H/2-35)
+            .attr('width', 70)
+            .attr('height', 70)
+            .attr('opacity', 0)
+            .attr("xlink:href", function(d){return d.image});
 
             var linkWrapper = svg.append("g").attr("id","links").selectAll("path.link")
             .data(links, function(d) { return d.target.id; })
